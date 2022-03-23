@@ -8,17 +8,18 @@ public class Clients extends Browser {
 
     // Locators
     By plusSignAddClient = By.xpath("//span[@class='button-add__plus']");
-    By clientNameTxtBox = By.xpath("//span[@class='add-client__name']");
-    By addClientBttn = By.xpath("//span[@class='add-client__submit']");
+    By clientNameTxtBox = By.xpath("//input[@class='add-client__name']");
+    By addClientBttn = By.xpath("//button[@class='add-client__submit']");
+    By cancelClientBttn = By.xpath("//button[@class='add-client__cancel']");
 
-    public void addNewClient(String clientName) {
-        WebElement addClient = driver.findElement(plusSignAddClient);
-        scrollToElement(addClient);
+    public void addClient(String clientName) {
+        By client = By.xpath("//span[@class='sidebar__client-name' and text()='"+clientName+"']");
+        scrollToElement(driver.findElement(plusSignAddClient));
         driver.findElement(plusSignAddClient).click();
-        waitForElement(clientNameTxtBox);
         driver.findElement(clientNameTxtBox).sendKeys(clientName);
-        driver.findElement(addClientBttn);
-        waitForElement(By.xpath("//span[text()='"+clientName+"']"));
+        driver.findElement(addClientBttn).click();
+        waitForElement(client);
+        scrollToElement(driver.findElement(client));
     }
 
 }

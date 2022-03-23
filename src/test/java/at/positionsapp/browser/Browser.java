@@ -4,6 +4,8 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 
@@ -93,7 +95,7 @@ public class Browser {
         // Waiting for 5 seconds for an element to be present on the page, checking
         // for its presence once every 1 second.
         Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
-                .withTimeout(Duration.ofSeconds(10L))
+                .withTimeout(Duration.ofSeconds(15L))
                 .pollingEvery(Duration.ofSeconds(1L))
                 .ignoring(NoSuchElementException.class);
         WebElement find = wait.until(new Function<WebDriver, WebElement>() {
@@ -104,7 +106,8 @@ public class Browser {
     }
 
     public void scrollToElement(WebElement element) {
-        js.executeScript("arguments[0].scrollIntoView(alignToTop);", element);
+        Actions scroll = new Actions(driver);
+        scroll.moveToElement(element).build().perform();
     }
 
 }

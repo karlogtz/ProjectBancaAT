@@ -18,7 +18,7 @@ public class Tests extends Browser {
     @Test
     public void addClient() throws Exception {
         login();
-        client.addNewClient("'Karlo");
+        client.addClient("{{{karlo");
     }
 
 }
