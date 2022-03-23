@@ -5,10 +5,20 @@ import at.positionsapp.browser.Browser;
 
 public class Tests extends Browser {
 
+    Clients client = new Clients();
+
     @Test
-    public void launchBrowser() throws Exception {
-        setUp("Chrome");
-        appLogin();
+    public void login() throws Exception {
+        launchBrowser("Chrome");
+        emailLogin();
+        pwdLogin();
+        activeSessionPrompt(true,false);
+    }
+
+    @Test
+    public void addClient() throws Exception {
+        login();
+        client.addNewClient("'Karlo");
     }
 
 }
