@@ -18,7 +18,7 @@ public class Browser {
     public static WebDriver driver;
     JavascriptExecutor js = (JavascriptExecutor) driver;
 
-    // Variables
+    // Temp variables for login
     final String user = "iss@agilethought.com";
     final String pwd = "NewPassword!";
 
@@ -36,15 +36,18 @@ public class Browser {
     public void launchBrowser(String browser) throws Exception {
         switch (browser.toLowerCase(Locale.ROOT)){
             case("chrome"):
-                System.setProperty("webdriver.chrome.driver", "./src/test/resources/drivers/chromedriver.exe");
+                System.setProperty("webdriver.chrome.driver",
+                        "./src/test/resources/drivers/chromedriver.exe");
                 driver = new ChromeDriver();
                 break;
             case("firefox"):
-                System.setProperty("webdriver.gecko.driver", "./src/test/resources/drivers/geckodriver.exe");
+                System.setProperty("webdriver.gecko.driver",
+                        "./src/test/resources/drivers/geckodriver.exe");
                 driver = new FirefoxDriver();
                 break;
             case("edge"):
-                System.setProperty("webdriver.edge.driver", "./src/test/resources/drivers/msedgedriver.exe");
+                System.setProperty("webdriver.edge.driver",
+                        "./src/test/resources/drivers/msedgedriver.exe");
                 driver = new EdgeDriver();
                 break;
             default:
@@ -60,8 +63,8 @@ public class Browser {
      */
     public void emailLogin() throws InterruptedException {
         waitForElement(emailTextBox);
-        driver.findElement(emailTextBox).sendKeys(user);
-        driver.findElement(emailNextBttn).click();
+        find(emailTextBox).sendKeys(user);
+        find(emailNextBttn).click();
     }
 
     /*
@@ -69,8 +72,8 @@ public class Browser {
      */
     public void pwdLogin() throws InterruptedException {
         waitForElement(atLogo);
-        driver.findElement(pwdTextBox).sendKeys(pwd);
-        driver.findElement(pwdLoginBttn).click();
+        find(pwdTextBox).sendKeys(pwd);
+        find(pwdLoginBttn).click();
     }
 
     /*
@@ -81,12 +84,12 @@ public class Browser {
     public void activeSessionPrompt(boolean promptAgain, boolean keepSessionActive) throws InterruptedException {
         waitForElement(activeSessionBttnYes);
         if (promptAgain) {
-            driver.findElement(doNotShowAgainBox).click();
+            find(doNotShowAgainBox).click();
         }
         if (keepSessionActive) {
-            driver.findElement(activeSessionBttnYes).click();
+            find(activeSessionBttnYes).click();
         } else {
-            driver.findElement(activeSessionBttnNo).click();
+            find(activeSessionBttnNo).click();
         }
         waitForElement(backlogPageHeader);
     }
@@ -100,7 +103,7 @@ public class Browser {
                 .ignoring(NoSuchElementException.class);
         WebElement find = wait.until(new Function<WebDriver, WebElement>() {
             public WebElement apply(WebDriver driver) {
-                return driver.findElement(element);
+                return find(element);
             }
         });
     }
@@ -108,6 +111,10 @@ public class Browser {
     public void scrollToElement(WebElement element) {
         Actions scroll = new Actions(driver);
         scroll.moveToElement(element).build().perform();
+    }
+
+    public WebElement find(By element) throws NotFoundException {
+        return driver.findElement(element);
     }
 
 }

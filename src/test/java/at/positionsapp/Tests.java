@@ -21,4 +21,10 @@ public class Tests extends Browser {
         client.addClient("{{{karlo");
     }
 
+    @Test
+    public void deleteClient() throws Exception {
+        login();
+        client.deleteClient("{{{karlo", true);
+    }
+
 }
