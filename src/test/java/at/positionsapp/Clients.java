@@ -15,7 +15,7 @@ public class Clients extends Browser {
     By plusSignAddClient = By.xpath("//span[@class='button-add__plus']");
     By clientNameTxtBox = By.xpath("//input[@class='add-client__name']");
     By addClientBttn = By.xpath("//button[@class='add-client__submit']");
-    By cancelClientBttn = By.xpath("//button[@class='add-client__cancel']");
+    By cancelClientBttn = By.xpath("//span[@class='add-client__cancel']");
     By clientsList = By.xpath("//span[@class='sidebar__client-name']");
     By trashIcon = By.xpath("//span[@class='sidebar__client-delete']");
     By confirmDeleteOkBttn = By.xpath("//button[@type='button' and text()='Ok']");
@@ -31,6 +31,15 @@ public class Clients extends Browser {
         find(addClientBttn).click();
         waitForElement(client);
         scrollToElement(find(client));
+    }
+
+    public void cancelAddClient(String clientName) {
+        setClient(clientName);
+        scrollToElement(find(plusSignAddClient));
+        find(plusSignAddClient).click();
+        find(clientNameTxtBox).sendKeys(clientName);
+        find(cancelClientBttn).click();
+        waitForElement(plusSignAddClient);
     }
 
     public void deleteClient(String clientName, boolean confirmation) {
