@@ -6,6 +6,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 
@@ -33,7 +34,7 @@ public class Browser {
     By activeSessionBttnYes = By.xpath("//input[@type='submit']");
     By backlogPageHeader = By.xpath("//h2[text()='BACKLOG']");
 
-    public void launchBrowser(String browser) throws Exception {
+    public void launchBrowser(String browser) {
         switch (browser.toLowerCase(Locale.ROOT)){
             case("chrome"):
                 System.setProperty("webdriver.chrome.driver",
@@ -61,7 +62,7 @@ public class Browser {
     /*
     Manage login email prompt
      */
-    public void emailLogin() throws InterruptedException {
+    public void emailLogin() {
         waitForElement(emailTextBox);
         find(emailTextBox).sendKeys(user);
         find(emailNextBttn).click();
@@ -70,7 +71,7 @@ public class Browser {
     /*
     Manage login password prompt
      */
-    public void pwdLogin() throws InterruptedException {
+    public void pwdLogin() {
         waitForElement(atLogo);
         find(pwdTextBox).sendKeys(pwd);
         find(pwdLoginBttn).click();
@@ -81,7 +82,7 @@ public class Browser {
     promptAgain: to select the "Do not show again" check box.
     keepSessionActive: to select Yes or No options to keep session active.
      */
-    public void activeSessionPrompt(boolean promptAgain, boolean keepSessionActive) throws InterruptedException {
+    public void activeSessionPrompt(boolean promptAgain, boolean keepSessionActive) {
         waitForElement(activeSessionBttnYes);
         if (promptAgain) {
             find(doNotShowAgainBox).click();
@@ -97,15 +98,11 @@ public class Browser {
     public void waitForElement(final By element) {
         // Waiting for 5 seconds for an element to be present on the page, checking
         // for its presence once every 1 second.
-        Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+        Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(15L))
                 .pollingEvery(Duration.ofSeconds(1L))
                 .ignoring(NoSuchElementException.class);
-        WebElement find = wait.until(new Function<WebDriver, WebElement>() {
-            public WebElement apply(WebDriver driver) {
-                return find(element);
-            }
-        });
+        WebElement find = wait.until(driver -> find(element));
     }
 
     public void scrollToElement(WebElement element) {

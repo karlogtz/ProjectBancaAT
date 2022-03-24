@@ -1,4 +1,4 @@
-package at.positionsapp;
+package at.positionsapp.actions;
 
 import at.positionsapp.browser.Browser;
 import org.openqa.selenium.By;
@@ -66,7 +66,16 @@ public class Clients extends Browser {
     }
 
     public boolean clientExist(String clientName) {
+        setClient(clientName);
         return find(client).getText().equalsIgnoreCase(clientName);
+    }
+
+    public void selectClient(String clientName) {
+        setClient(clientName);
+        scrollToElement(find(client));
+        if (clientExist(clientName)) {
+            find(client).click();
+        }
     }
 
     public void confirmDeletion(boolean option) {
