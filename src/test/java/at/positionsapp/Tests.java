@@ -38,10 +38,11 @@ public class Tests {
     }
 
     @Test
-    public void addPosition() {
+    public void addPosition() throws InterruptedException {
         login();
         client.selectClient("{{{karlo");
-        position.addPosition();
+        //position.addPosMandatory("Karlo", "Karlo", "04/01/2022", "3", "99",
+        //        "E", "E", "E", "A");
         position.elementsTest();
     }
 

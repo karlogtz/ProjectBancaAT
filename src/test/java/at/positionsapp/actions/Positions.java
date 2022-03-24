@@ -60,11 +60,21 @@ public class Positions extends Browser {
         waitForElement(addPosFrame);
     }
 
-    public void addPositionMandatoryFields(String name, String requestor, String startDate, String bookingID,
+    public void addPosMandatory(String name, String requestor, String startDate, String bookingID,
                                            String rate, String LOS, String practice, String jobCode, String reqComp) {
+        addPosition();
+        find(addPosName).sendKeys(name);
+        find(addPosRequestor).sendKeys(requestor);
+        find(addPosStartDate).sendKeys(startDate);
+        find(addPosBookingID).sendKeys(bookingID);
+        find(addPosRate).sendKeys(rate);
+        find(addPosLOS).sendKeys(LOS);
+        find(addPosPractice).sendKeys(practice);
+        find(addPosJobCode).sendKeys(jobCode);
+        find(addPosReqCompt).sendKeys(reqComp);
     }
 
-    public void elementsTest() {
+    public void elementsTest() throws InterruptedException {
         //find(addPosCloseFrame).click(); // org.openqa.selenium.ElementNotInteractableException: element not interactable
         find(addPosIntakeStatusDD).click();
         find(addPosPriorityDD).click();
@@ -74,8 +84,8 @@ public class Positions extends Browser {
         find(addPosProject).sendKeys("Automation");
         find(addPosRequestor).sendKeys("Karlo");
         find(addPosPositions); // org.openqa.selenium.ElementNotInteractableException: element not interactable
-        enterDates(addPosRequestedOn, "03/25/2022");
-        enterDates(addPosStartDate, "03/28/2022");
+        enterDates(addPosRequestedOn, "03/01/2022");
+        enterDates(addPosStartDate, "04/29/2022");
         find(addPosProjectDuration).sendKeys("Undefined");
         find(addPosHireTypeDD).click();
         find(addPosSow).click();
@@ -94,9 +104,9 @@ public class Positions extends Browser {
         find(addPosOnsiteReqs).sendKeys("Test");
         find(addPosTravel).click();
         find(addPosHowLong).sendKeys("6 months");
-        enterAutocompleteList(addPosLOS, "F");
-        enterAutocompleteList(addPosPractice, "Q");
-        enterAutocompleteList(addPosJobCode, "A");
+        enterAutocompleteList(addPosLOS, "E");
+        enterAutocompleteList(addPosPractice, "E");
+        enterAutocompleteList(addPosJobCode, "E");
         find(addPosMainTech).sendKeys("QA");
         find(addPosMgr).sendKeys("Karlo");
         enterAutocompleteList(addPosReqCompt, "A");
@@ -106,21 +116,21 @@ public class Positions extends Browser {
         find(addPosJobDesc).sendKeys("Test");
         find(addPosReqTechSkills).sendKeys("Test");
         find(addPosNiceToHaveTechSkills).sendKeys("Test");
-        find(addPosSaveBttn);
+        find(addPosSaveBttn).click();
         find(addPosCancelBttn);
     }
 
-    public void enterDates(By element, String date) {
-        find(element).click();
+    public void enterDates(By element, String date) throws InterruptedException {
+        // Need to fix the date selection
         find(element).clear();
-        find(element).click();
         find(element).sendKeys(date);
         find(element).sendKeys(Keys.RETURN);
     }
 
-    public void enterAutocompleteList(By element, String value) {
-        find(element).click();
+    public void enterAutocompleteList(By element, String value) throws InterruptedException {
         find(element).sendKeys(value);
+        // Need to change this wait for a fluent wait
+        Thread.sleep(2000);
         find(element).sendKeys(Keys.RETURN);
     }
 
