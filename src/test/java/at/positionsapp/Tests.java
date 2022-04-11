@@ -38,12 +38,14 @@ public class Tests {
     }
 
     @Test
-    public void addPosition() throws InterruptedException {
+    public void addPosition() {
         login();
         client.selectClient("{{{karlo");
-        //position.addPosMandatory("Karlo", "Karlo", "04/01/2022", "3", "99",
-        //        "E", "E", "E", "A");
+        position.addPosMandatoryOnly("Mandatory", "Test", "04/29/2022", "3", "99",
+                "Digital", "FSI", "FSQE2M - Title - Automation Tester", "Test Automation");
+        /* To test all elements within the Add position frame
         position.elementsTest();
+         */
     }
 
 }

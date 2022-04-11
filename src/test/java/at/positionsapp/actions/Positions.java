@@ -3,7 +3,9 @@ package at.positionsapp.actions;
 import at.positionsapp.browser.Browser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.NoSuchElementException;
+
+import java.util.stream.IntStream;
 
 public class Positions extends Browser {
 
@@ -60,21 +62,23 @@ public class Positions extends Browser {
         waitForElement(addPosFrame);
     }
 
-    public void addPosMandatory(String name, String requestor, String startDate, String bookingID,
-                                           String rate, String LOS, String practice, String jobCode, String reqComp) {
+    public void addPosMandatoryOnly(String name, String requestor, String startDate, String bookingID, String rate,
+                                    String LOS, String practice, String jobCode, String reqComp) {
         addPosition();
         find(addPosName).sendKeys(name);
         find(addPosRequestor).sendKeys(requestor);
-        find(addPosStartDate).sendKeys(startDate);
+        enterDates(addPosStartDate, startDate);
         find(addPosBookingID).sendKeys(bookingID);
         find(addPosRate).sendKeys(rate);
-        find(addPosLOS).sendKeys(LOS);
-        find(addPosPractice).sendKeys(practice);
-        find(addPosJobCode).sendKeys(jobCode);
-        find(addPosReqCompt).sendKeys(reqComp);
+        enterAutocompleteList(addPosLOS, LOS);
+        enterAutocompleteList(addPosPractice, practice);
+        enterAutocompleteList(addPosJobCode, jobCode);
+        enterAutocompleteListMulti(addPosReqCompt, reqComp);
+        find(addPosSaveBttn).click();
     }
 
-    public void elementsTest() throws InterruptedException {
+    public void elementsTest() {
+        addPosition();
         //find(addPosCloseFrame).click(); // org.openqa.selenium.ElementNotInteractableException: element not interactable
         find(addPosIntakeStatusDD).click();
         find(addPosPriorityDD).click();
@@ -84,7 +88,7 @@ public class Positions extends Browser {
         find(addPosProject).sendKeys("Automation");
         find(addPosRequestor).sendKeys("Karlo");
         find(addPosPositions); // org.openqa.selenium.ElementNotInteractableException: element not interactable
-        enterDates(addPosRequestedOn, "03/01/2022");
+        enterDates(addPosRequestedOn, "04/10/2022");
         enterDates(addPosStartDate, "04/29/2022");
         find(addPosProjectDuration).sendKeys("Undefined");
         find(addPosHireTypeDD).click();
@@ -117,20 +121,43 @@ public class Positions extends Browser {
         find(addPosReqTechSkills).sendKeys("Test");
         find(addPosNiceToHaveTechSkills).sendKeys("Test");
         find(addPosSaveBttn).click();
-        find(addPosCancelBttn);
+        //find(addPosCancelBttn);
     }
 
-    public void enterDates(By element, String date) throws InterruptedException {
-        // Need to fix the date selection
-        find(element).clear();
+    public void enterDates (By element, String date) {
+        find(element).click();
+        clearDateBackSpace(element);
         find(element).sendKeys(date);
         find(element).sendKeys(Keys.RETURN);
     }
 
-    public void enterAutocompleteList(By element, String value) throws InterruptedException {
+    public void clearDateBackSpace (By element) {
+        if(find(element).getAttribute("value").length() > 0) {
+            IntStream.range(0, 10).forEach(i -> find(element).sendKeys(Keys.BACK_SPACE));
+            handleTimer();
+        }
+    }
+
+    public void handleTimer () {
+        By timer = By.xpath("//button[@class='Toastify__close-button Toastify__close-button--error']");
+        try {
+            //waitForElement(timer);
+            if(find(timer).isDisplayed()){
+                find(timer).click();
+            }
+        } catch (NoSuchElementException ignored) {
+        }
+    }
+
+    public void enterAutocompleteList (By element, String value) {
         find(element).sendKeys(value);
-        // Need to change this wait for a fluent wait
-        Thread.sleep(2000);
+        waitForDynamicList(value);
+        find(element).sendKeys(Keys.RETURN);
+    }
+
+    public void enterAutocompleteListMulti (By element, String value) {
+        find(element).sendKeys(value);
+        waitForDynamicListMulti(value);
         find(element).sendKeys(Keys.RETURN);
     }
 

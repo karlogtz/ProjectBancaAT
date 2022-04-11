@@ -14,6 +14,8 @@ import java.time.Duration;
 import java.util.Locale;
 import java.util.function.Function;
 
+import static org.junit.Assert.assertEquals;
+
 public class Browser {
 
     public static WebDriver driver;
@@ -96,7 +98,7 @@ public class Browser {
     }
 
     public void waitForElement(final By element) {
-        // Waiting for 5 seconds for an element to be present on the page, checking
+        // Waiting for 15 seconds for an element to be present on the page, checking
         // for its presence once every 1 second.
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(15L))
@@ -105,13 +107,57 @@ public class Browser {
         WebElement find = wait.until(driver -> find(element));
     }
 
-    public void scrollToElement(WebElement element) {
+    public void waitForDynamicList (String value) {
+        By element = By.xpath("//div[contains(@id,'react-select') and text()='" + value + "']");
+        Wait<WebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(5L))
+                .pollingEvery(Duration.ofSeconds(1L))
+                .ignoring(NoSuchElementException.class);
+        WebElement find = wait.until(ExpectedConditions.visibilityOfElementLocated(element));
+    }
+
+    /*
+    Need to find a way to search for specific skill instead of hardcoded element ID
+     */
+    public void waitForDynamicListMulti (String value) {
+        By element = By.xpath("//div[contains(@id,'react-select-5-option-1')]");
+        Wait<WebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(5L))
+                .pollingEvery(Duration.ofSeconds(1L))
+                .ignoring(NoSuchElementException.class);
+        WebElement find = wait.until(ExpectedConditions.visibilityOfElementLocated(element));
+    }
+
+    public void scrollToElement (WebElement element) {
         Actions scroll = new Actions(driver);
         scroll.moveToElement(element).build().perform();
     }
 
-    public WebElement find(By element) throws NotFoundException {
+    public WebElement find (By element) throws NotFoundException {
         return driver.findElement(element);
     }
+
+
+
+    /* These methods might not be needed...
+    public void waitForAlert () throws NoAlertPresentException {
+        // Waiting for 5 seconds for an element to be present on the page, checking
+        // for its presence once every 1 second.
+        Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+                .withTimeout(Duration.ofSeconds(5L))
+                .pollingEvery(Duration.ofSeconds(1L))
+                .ignoring(NoSuchElementException.class);
+        wait.until(ExpectedConditions.alertIsPresent());
+    }
+
+    public void closeAlert () {
+        waitForAlert();
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
+    }
+
+     */
+
+
 
 }
