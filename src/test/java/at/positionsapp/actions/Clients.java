@@ -29,7 +29,7 @@ public class Clients extends Browser {
         find(plusSignAddClient).click();
         find(clientNameTxtBox).sendKeys(clientName);
         find(addClientBttn).click();
-        waitForElement(client);
+        waitForElement(client, 5L);
         scrollToElement(find(client));
     }
 
@@ -39,7 +39,7 @@ public class Clients extends Browser {
         find(plusSignAddClient).click();
         find(clientNameTxtBox).sendKeys(clientName);
         find(cancelClientBttn).click();
-        waitForElement(plusSignAddClient);
+        waitForElement(plusSignAddClient, 5L);
     }
 
     public void deleteClient(String clientName, boolean confirmation) {
@@ -57,7 +57,7 @@ public class Clients extends Browser {
             }
             confirmDeletion(confirmation);
             if (confirmation) {
-                waitForElement(confirmDeletedText);
+                waitForElement(confirmDeletedText, 5L);
                 clearConfirmationPrompt();
             }
         } else {

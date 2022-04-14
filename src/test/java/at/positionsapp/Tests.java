@@ -38,14 +38,39 @@ public class Tests {
     }
 
     @Test
+    public void closeAddPosition () throws InterruptedException {
+        login();
+        client.selectClient("{{{karlo");
+        position.closeAddPosition();
+    }
+
+    @Test
     public void addPosition() {
         login();
         client.selectClient("{{{karlo");
-        position.addPosMandatoryOnly("Mandatory", "Test", "04/29/2022", "3", "99",
+        position.addPosMandatoryOnly("QA", "Test", "04/29/2022", "3", "99",
                 "Digital", "FSI", "FSQE2M - Title - Automation Tester", "Test Automation");
-        /* To test all elements within the Add position frame
-        position.elementsTest();
-         */
+    }
+
+    @Test
+    public void addInternalAutocompleteCandidate () {
+        login();
+        client.selectClient("{{{karlo");
+        position.addCandidate("QA", "Karlo Urbano Gutierrez Olmedo", true, "");
+    }
+
+    @Test
+    public void addInternalManualCandidate () {
+        login();
+        client.selectClient("{{{karlo");
+        position.addCandidate("QA", "Karlo Gutierrez", true, "karlo.g@at.com");
+    }
+
+    @Test
+    public void addExternalCandidate () {
+        login();
+        client.selectClient("{{{karlo");
+        position.addCandidate("QA", "QA Intern - External", false, "internN@at.com");
     }
 
 }

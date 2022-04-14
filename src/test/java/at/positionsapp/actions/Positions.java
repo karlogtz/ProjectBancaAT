@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 public class Positions extends Browser {
 
     // Locators
+    // Add Position frame locators
     By addNewPosBttn = By.xpath("//div[@class='add-position']");
     By addPosCloseFrame = By.xpath("//span[@class='info-modal__close']");
     By addPosFrame = By.xpath("//div[@class='add_position_modal__position']");
@@ -56,15 +57,31 @@ public class Positions extends Browser {
     By addPosSaveBttn = By.xpath("//button[@type='submit']");
     By addPosCancelBttn = By.xpath("//span[@class='add-client__cancel']");
 
-    public void addPosition() {
-        waitForElement(addNewPosBttn);
+    //Add candidate locators locators
+    By positionList = By.xpath("//ul[@class='positions__list']");
+    By positionName;
+    By candidateAddNew = By.xpath("//span[text()='Add candidate']");
+    By candidateInternalRadioBttn = By.xpath("//label[@for='0']");
+    By candidateName = By.xpath("//input[@placeholder='Candidate name']");
+    By candidateEmail = By.xpath("//input[@placeholder='Candidate email']");
+    By candidateAddBttn = By.xpath("//button[text()='Add']");
+    By candidateCancelBttn = By.xpath("//span[@class='add-client__cancel']");
+
+    public void displayAddPosition () {
+        waitForElement(addNewPosBttn, 3L);
         find(addNewPosBttn).click();
-        waitForElement(addPosFrame);
+        waitForElement(addPosFrame, 3L);
     }
 
-    public void addPosMandatoryOnly(String name, String requestor, String startDate, String bookingID, String rate,
+    public void closeAddPosition () throws InterruptedException {
+        displayAddPosition();
+        Thread.sleep(500);
+        find(addPosCloseFrame).click();
+    }
+
+    public void addPosMandatoryOnly (String name, String requestor, String startDate, String bookingID, String rate,
                                     String LOS, String practice, String jobCode, String reqComp) {
-        addPosition();
+        displayAddPosition();
         find(addPosName).sendKeys(name);
         find(addPosRequestor).sendKeys(requestor);
         enterDates(addPosStartDate, startDate);
@@ -77,6 +94,81 @@ public class Positions extends Browser {
         find(addPosSaveBttn).click();
     }
 
+    public void enterDates (By element, String date) {
+        find(element).click();
+        clearDateBackSpace(element);
+        find(element).sendKeys(date);
+        find(element).sendKeys(Keys.RETURN);
+    }
+
+    public void clearDateBackSpace (By element) {
+        if(find(element).getAttribute("value").length() > 0) {
+            IntStream.range(0, 10).forEach(i -> find(element).sendKeys(Keys.BACK_SPACE));
+            handleTimer();
+        }
+    }
+
+    public void handleTimer () {
+        By timer = By.xpath("//button[@class='Toastify__close-button Toastify__close-button--error']");
+        try {
+            //waitForElement(timer);
+            if(find(timer).isDisplayed()){
+                find(timer).click();
+            }
+        } catch (NoSuchElementException ignored) {
+        }
+    }
+
+    public void enterAutocompleteList (By element, String value) {
+        find(element).sendKeys(value);
+        waitForDynamicList(value);
+        find(element).sendKeys(Keys.RETURN);
+    }
+
+    public void enterAutocompleteListMulti (By element, String value) {
+        find(element).sendKeys(value);
+        waitForDynamicListMulti(value);
+        find(element).sendKeys(Keys.RETURN);
+    }
+
+    public boolean positionExists (String name) {
+        waitForElement(positionList, 3L);
+        positionName = By.xpath("//span[@class='individual-position__title' and text()='" + name + "']");
+        return find(positionName).getText().equalsIgnoreCase(name);
+    }
+
+    public void addCandidate (String position, String name, boolean isInternal,  String email) {
+        if(positionExists(position)) {
+            find(positionName).click();
+            waitForElement(candidateAddNew, 3L);
+            find(candidateAddNew).click();
+            if(isInternal) {
+                handleInternalCandidate(name, email);
+            } else {
+                waitForElement(candidateInternalRadioBttn, 3L);
+                find(candidateName).sendKeys(name);
+            }
+            find(candidateAddBttn).click();
+        } else {
+            System.out.println("Position " + position + " not found!");
+        }
+    }
+
+    public void handleInternalCandidate (String name, String email) {
+        By autocompleteName = By.xpath("//span[@class='name' and text()='" + name + "']");
+        waitForElement(candidateInternalRadioBttn, 3L);
+        find(candidateInternalRadioBttn).click();
+        find(candidateName).sendKeys(name);
+        try {
+            waitForElement(autocompleteName, 3L);
+            find(autocompleteName).click();
+        } catch (Exception e) {
+            System.out.println("Name " + name + " not found in autocomplete list! " + e);
+            find(candidateEmail).sendKeys(email);
+        }
+    }
+
+        /* To test locators of all elements on the Add Position frame
     public void elementsTest() {
         addPosition();
         //find(addPosCloseFrame).click(); // org.openqa.selenium.ElementNotInteractableException: element not interactable
@@ -123,42 +215,6 @@ public class Positions extends Browser {
         find(addPosSaveBttn).click();
         //find(addPosCancelBttn);
     }
-
-    public void enterDates (By element, String date) {
-        find(element).click();
-        clearDateBackSpace(element);
-        find(element).sendKeys(date);
-        find(element).sendKeys(Keys.RETURN);
-    }
-
-    public void clearDateBackSpace (By element) {
-        if(find(element).getAttribute("value").length() > 0) {
-            IntStream.range(0, 10).forEach(i -> find(element).sendKeys(Keys.BACK_SPACE));
-            handleTimer();
-        }
-    }
-
-    public void handleTimer () {
-        By timer = By.xpath("//button[@class='Toastify__close-button Toastify__close-button--error']");
-        try {
-            //waitForElement(timer);
-            if(find(timer).isDisplayed()){
-                find(timer).click();
-            }
-        } catch (NoSuchElementException ignored) {
-        }
-    }
-
-    public void enterAutocompleteList (By element, String value) {
-        find(element).sendKeys(value);
-        waitForDynamicList(value);
-        find(element).sendKeys(Keys.RETURN);
-    }
-
-    public void enterAutocompleteListMulti (By element, String value) {
-        find(element).sendKeys(value);
-        waitForDynamicListMulti(value);
-        find(element).sendKeys(Keys.RETURN);
-    }
+     */
 
 }

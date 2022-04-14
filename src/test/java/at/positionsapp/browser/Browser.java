@@ -65,7 +65,7 @@ public class Browser {
     Manage login email prompt
      */
     public void emailLogin() {
-        waitForElement(emailTextBox);
+        waitForElement(emailTextBox, 5L);
         find(emailTextBox).sendKeys(user);
         find(emailNextBttn).click();
     }
@@ -74,7 +74,7 @@ public class Browser {
     Manage login password prompt
      */
     public void pwdLogin() {
-        waitForElement(atLogo);
+        waitForElement(atLogo, 5L);
         find(pwdTextBox).sendKeys(pwd);
         find(pwdLoginBttn).click();
     }
@@ -85,7 +85,7 @@ public class Browser {
     keepSessionActive: to select Yes or No options to keep session active.
      */
     public void activeSessionPrompt(boolean promptAgain, boolean keepSessionActive) {
-        waitForElement(activeSessionBttnYes);
+        waitForElement(activeSessionBttnYes, 5L);
         if (promptAgain) {
             find(doNotShowAgainBox).click();
         }
@@ -94,14 +94,14 @@ public class Browser {
         } else {
             find(activeSessionBttnNo).click();
         }
-        waitForElement(backlogPageHeader);
+        waitForElement(backlogPageHeader, 15L);
     }
 
-    public void waitForElement(final By element) {
-        // Waiting for 15 seconds for an element to be present on the page, checking
+    public void waitForElement(final By element, Long timeOut) {
+        // Waiting defined by timeOut (in seconds) for an element to be present on the page, checking
         // for its presence once every 1 second.
         Wait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(15L))
+                .withTimeout(Duration.ofSeconds(timeOut))
                 .pollingEvery(Duration.ofSeconds(1L))
                 .ignoring(NoSuchElementException.class);
         WebElement find = wait.until(driver -> find(element));
@@ -155,9 +155,6 @@ public class Browser {
         Alert alert = driver.switchTo().alert();
         alert.accept();
     }
-
      */
-
-
 
 }
