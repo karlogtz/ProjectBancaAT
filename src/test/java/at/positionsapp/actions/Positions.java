@@ -127,7 +127,7 @@ public class Positions extends Browser {
 
     public void enterAutocompleteListMulti (By element, String value) {
         find(element).sendKeys(value);
-        waitForDynamicListMulti(value);
+        waitForDynamicListMulti();
         find(element).sendKeys(Keys.RETURN);
     }
 

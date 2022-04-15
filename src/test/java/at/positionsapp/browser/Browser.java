@@ -1,10 +1,10 @@
 package at.positionsapp.browser;
 
+import com.aventstack.extentreports.Status;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -12,9 +12,6 @@ import org.openqa.selenium.support.ui.Wait;
 
 import java.time.Duration;
 import java.util.Locale;
-import java.util.function.Function;
-
-import static org.junit.Assert.assertEquals;
 
 public class Browser {
 
@@ -36,29 +33,40 @@ public class Browser {
     By activeSessionBttnYes = By.xpath("//input[@type='submit']");
     By backlogPageHeader = By.xpath("//h2[text()='BACKLOG']");
 
-    public void launchBrowser(String browser) {
-        switch (browser.toLowerCase(Locale.ROOT)){
-            case("chrome"):
-                System.setProperty("webdriver.chrome.driver",
-                        "./src/test/resources/drivers/chromedriver.exe");
-                driver = new ChromeDriver();
-                break;
-            case("firefox"):
-                System.setProperty("webdriver.gecko.driver",
-                        "./src/test/resources/drivers/geckodriver.exe");
-                driver = new FirefoxDriver();
-                break;
-            case("edge"):
-                System.setProperty("webdriver.edge.driver",
-                        "./src/test/resources/drivers/msedgedriver.exe");
-                driver = new EdgeDriver();
-                break;
-            default:
-                System.out.println("Browser not supported!");
-                break;
+    public void launchBrowser(String browser, String URL) {
+        try {
+            switch (browser.toLowerCase(Locale.ROOT)){
+                case("chrome"):
+                    System.setProperty("webdriver.chrome.driver",
+                            "./src/test/resources/drivers/chromedriver.exe");
+                    driver = new ChromeDriver();
+                    break;
+                case("firefox"):
+                    System.setProperty("webdriver.gecko.driver",
+                            "./src/test/resources/drivers/geckodriver.exe");
+                    driver = new FirefoxDriver();
+                    break;
+                case("edge"):
+                    System.setProperty("webdriver.edge.driver",
+                            "./src/test/resources/drivers/msedgedriver.exe");
+                    driver = new EdgeDriver();
+                    break;
+                default:
+                    Report.log(Status.INFO, "Browser " + browser + " not supported!", false);
+                    break;
+            }
+            driver.manage().window().maximize();
+            driver.get(URL);
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "Test failed with exception: \n"
+                    + e.getMessage(), false);
         }
-        driver.manage().window().maximize();
-        driver.get("https://positionsapp-uat.azurewebsites.net/#");
+
+    }
+
+    public void closeBrowser() {
+        driver.close();
+        driver.quit();
     }
 
     /*
@@ -97,9 +105,11 @@ public class Browser {
         waitForElement(backlogPageHeader, 15L);
     }
 
+    /*
+    Waiting defined by timeOut (in seconds) for an element to be present on the page, checking
+    for its presence once every 1 second.
+     */
     public void waitForElement(final By element, Long timeOut) {
-        // Waiting defined by timeOut (in seconds) for an element to be present on the page, checking
-        // for its presence once every 1 second.
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(timeOut))
                 .pollingEvery(Duration.ofSeconds(1L))
@@ -107,6 +117,9 @@ public class Browser {
         WebElement find = wait.until(driver -> find(element));
     }
 
+    /*
+    Wait for the results of the search in the dynamic lists to be displayed
+     */
     public void waitForDynamicList (String value) {
         By element = By.xpath("//div[contains(@id,'react-select') and text()='" + value + "']");
         Wait<WebDriver> wait = new FluentWait<>(driver)
@@ -119,7 +132,7 @@ public class Browser {
     /*
     Need to find a way to search for specific skill instead of hardcoded element ID
      */
-    public void waitForDynamicListMulti (String value) {
+    public void waitForDynamicListMulti () {
         By element = By.xpath("//div[contains(@id,'react-select-5-option-1')]");
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(5L))
