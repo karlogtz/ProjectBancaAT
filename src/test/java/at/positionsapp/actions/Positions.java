@@ -92,6 +92,7 @@ public class Positions extends Browser {
         enterAutocompleteList(addPosJobCode, jobCode);
         enterAutocompleteListMulti(addPosReqCompt, reqComp);
         find(addPosSaveBttn).click();
+        waitForElement(By.xpath("//span[@class='individual-position__title' and text()='" + name + "']"),5L);
     }
 
     public void enterDates (By element, String date) {

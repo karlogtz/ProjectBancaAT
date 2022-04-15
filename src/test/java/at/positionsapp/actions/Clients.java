@@ -1,6 +1,8 @@
 package at.positionsapp.actions;
 
 import at.positionsapp.browser.Browser;
+import at.positionsapp.browser.Report;
+import com.aventstack.extentreports.Status;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -44,24 +46,28 @@ public class Clients extends Browser {
 
     public void deleteClient(String clientName, boolean confirmation) {
         setClient(clientName);
-        scrollToElement(find(client));
-        if (clientExist(clientName)) {
-            List<WebElement> clients = driver.findElements(clientsList);
-            if (clients.size() > 0) {
-                for (WebElement client : clients) {
-                    if (client.getText().equalsIgnoreCase(clientName)) {
-                        find(trashIcon).click();
-                        break;
+        try {
+            if (clientExist(clientName)) {
+                Report.log(Status.INFO, "Client before deletion.", true);
+                scrollToElement(find(client));
+                List<WebElement> clients = driver.findElements(clientsList);
+                if (clients.size() > 0) {
+                    for (WebElement client : clients) {
+                        if (client.getText().equalsIgnoreCase(clientName)) {
+                            find(trashIcon).click();
+                            break;
+                        }
                     }
                 }
+                confirmDeletion(confirmation);
+                if (confirmation) {
+                    waitForElement(confirmDeletedText, 5L);
+                    clearConfirmationPrompt();
+                    Report.log(Status.PASS, "Client deleted successfully.", true);
+                }
             }
-            confirmDeletion(confirmation);
-            if (confirmation) {
-                waitForElement(confirmDeletedText, 5L);
-                clearConfirmationPrompt();
-            }
-        } else {
-            System.out.println("Client does not exist!");
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "Client " + clientName + " does not exist.", false);
         }
     }
 

@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 
 public class Report extends Browser {
 
-    public static String reportLocation = "C:\\Report\\Spark.html";
+    public static String reportLocation = "C:\\Report\\"+ reportName() + ".html";
     public static ExtentReports extentRpt;
     public static ExtentSparkReporter sparkRpt;
     public static ExtentTest test;
@@ -51,9 +51,11 @@ public class Report extends Browser {
      * @param takeScreenshot
      */
     public static void log (Status status, String description, Boolean takeScreenshot) {
-        if(takeScreenshot) { test.log(status, description, MediaEntityBuilder.createScreenCaptureFromPath(screenshot()).build());
+        if(takeScreenshot) {
+            test.log(status, description, MediaEntityBuilder.createScreenCaptureFromPath(screenshot()).build());
         }
-        else { test.log(status, description);
+        else {
+            test.log(status, description);
         }
     }
 
@@ -76,6 +78,12 @@ public class Report extends Browser {
             strFileLocation = "";
         }
         return strFileLocation;
+    }
+
+    private static String reportName() {
+        SimpleDateFormat formatter = new SimpleDateFormat("MMddyyy_hhmmss");
+        Date date = new Date(System.currentTimeMillis());
+        return "TestRun_" + formatter.format(date);
     }
 
 }

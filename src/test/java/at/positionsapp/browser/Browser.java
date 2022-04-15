@@ -61,7 +61,6 @@ public class Browser {
             Report.log(Status.FAIL, "Test failed with exception: \n"
                     + e.getMessage(), false);
         }
-
     }
 
     public void closeBrowser() {
@@ -69,81 +68,116 @@ public class Browser {
         driver.quit();
     }
 
-    /*
-    Manage login email prompt
+    /**
+     * Manage login email prompt
      */
     public void emailLogin() {
-        waitForElement(emailTextBox, 5L);
-        find(emailTextBox).sendKeys(user);
-        find(emailNextBttn).click();
+        try {
+            waitForElement(emailTextBox, 5L);
+            find(emailTextBox).sendKeys(user);
+            find(emailNextBttn).click();
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "Test failed with exception: \n"
+                    + e.getMessage(), false);
+        }
     }
 
-    /*
-    Manage login password prompt
+    /**
+     * Manage login password prompt
      */
     public void pwdLogin() {
-        waitForElement(atLogo, 5L);
-        find(pwdTextBox).sendKeys(pwd);
-        find(pwdLoginBttn).click();
+        try {
+            waitForElement(atLogo, 5L);
+            find(pwdTextBox).sendKeys(pwd);
+            find(pwdLoginBttn).click();
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "Test failed with exception: \n"
+                    + e.getMessage(), false);
+        }
     }
 
-    /*
-    Manage keep active session prompt.
-    promptAgain: to select the "Do not show again" check box.
-    keepSessionActive: to select Yes or No options to keep session active.
+    /**
+     * Manage keep active session prompt.
+     * promptAgain: to select the "Do not show again" check box.
+     * keepSessionActive: to select Yes or No options to keep session active.
      */
     public void activeSessionPrompt(boolean promptAgain, boolean keepSessionActive) {
-        waitForElement(activeSessionBttnYes, 5L);
-        if (promptAgain) {
-            find(doNotShowAgainBox).click();
+        try {
+            waitForElement(activeSessionBttnYes, 5L);
+            if (promptAgain) {
+                find(doNotShowAgainBox).click();
+            }
+            if (keepSessionActive) {
+                find(activeSessionBttnYes).click();
+            } else {
+                find(activeSessionBttnNo).click();
+            }
+            waitForElement(backlogPageHeader, 15L);
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "Test failed with exception: \n"
+                    + e.getMessage(), false);
         }
-        if (keepSessionActive) {
-            find(activeSessionBttnYes).click();
-        } else {
-            find(activeSessionBttnNo).click();
-        }
-        waitForElement(backlogPageHeader, 15L);
     }
 
-    /*
-    Waiting defined by timeOut (in seconds) for an element to be present on the page, checking
-    for its presence once every 1 second.
+    /**
+     * Waiting defined by timeOut (in seconds) for an element to be present on the page, checking
+     * for its presence once every 1 second.
      */
     public void waitForElement(final By element, Long timeOut) {
-        Wait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(timeOut))
-                .pollingEvery(Duration.ofSeconds(1L))
-                .ignoring(NoSuchElementException.class);
-        WebElement find = wait.until(driver -> find(element));
+        try {
+            Wait<WebDriver> wait = new FluentWait<>(driver)
+                    .withTimeout(Duration.ofSeconds(timeOut))
+                    .pollingEvery(Duration.ofSeconds(1L))
+                    .ignoring(NoSuchElementException.class);
+            WebElement find = wait.until(driver -> find(element));
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "WebElement " + element + " was not found.", false);
+        }
     }
 
-    /*
-    Wait for the results of the search in the dynamic lists to be displayed
+    /**
+     * Wait for the results of the search in the dynamic lists to be displayed
      */
     public void waitForDynamicList (String value) {
         By element = By.xpath("//div[contains(@id,'react-select') and text()='" + value + "']");
-        Wait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(5L))
-                .pollingEvery(Duration.ofSeconds(1L))
-                .ignoring(NoSuchElementException.class);
-        WebElement find = wait.until(ExpectedConditions.visibilityOfElementLocated(element));
+        try {
+            Wait<WebDriver> wait = new FluentWait<>(driver)
+                    .withTimeout(Duration.ofSeconds(5L))
+                    .pollingEvery(Duration.ofSeconds(1L))
+                    .ignoring(NoSuchElementException.class);
+            WebElement find = wait.until(ExpectedConditions.visibilityOfElementLocated(element));
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "The value " + value + " was not found on the list.", false);
+        }
     }
 
-    /*
-    Need to find a way to search for specific skill instead of hardcoded element ID
+    /**
+     * Need to find a way to search for specific skill instead of hardcoded element ID.
+     * Pending better implementation...
      */
     public void waitForDynamicListMulti () {
         By element = By.xpath("//div[contains(@id,'react-select-5-option-1')]");
-        Wait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(5L))
-                .pollingEvery(Duration.ofSeconds(1L))
-                .ignoring(NoSuchElementException.class);
-        WebElement find = wait.until(ExpectedConditions.visibilityOfElementLocated(element));
+        try {
+            Wait<WebDriver> wait = new FluentWait<>(driver)
+                    .withTimeout(Duration.ofSeconds(5L))
+                    .pollingEvery(Duration.ofSeconds(1L))
+                    .ignoring(NoSuchElementException.class);
+            WebElement find = wait.until(ExpectedConditions.visibilityOfElementLocated(element));
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "The value " + element + " was not found on the list.", false);
+        }
     }
 
+    /**
+     * To search for an element and scroll the view into the element
+     */
     public void scrollToElement (WebElement element) {
-        Actions scroll = new Actions(driver);
-        scroll.moveToElement(element).build().perform();
+        try {
+            Actions scroll = new Actions(driver);
+            scroll.moveToElement(element).build().perform();
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "The element " + element + " was not found.", false);
+        }
     }
 
     public WebElement find (By element) throws NotFoundException {
