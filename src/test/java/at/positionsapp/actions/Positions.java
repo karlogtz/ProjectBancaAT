@@ -1,6 +1,8 @@
 package at.positionsapp.actions;
 
 import at.positionsapp.browser.Browser;
+import at.positionsapp.browser.Report;
+import com.aventstack.extentreports.Status;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
@@ -67,18 +69,35 @@ public class Positions extends Browser {
     By candidateAddBttn = By.xpath("//button[text()='Add']");
     By candidateCancelBttn = By.xpath("//span[@class='add-client__cancel']");
 
+    /**
+     * Opens the Add position frame
+     */
     public void displayAddPosition () {
-        waitForElement(addNewPosBttn, 3L);
-        find(addNewPosBttn).click();
-        waitForElement(addPosFrame, 3L);
+        try {
+            waitForElement(addNewPosBttn, 3L);
+            find(addNewPosBttn).click();
+            waitForElement(addPosFrame, 3L);
+        } catch (Exception e) {
+            Report.log(Status.INFO, "Add position frame was not displayed.", false);
+        }
     }
 
-    public void closeAddPosition () throws InterruptedException {
-        displayAddPosition();
-        Thread.sleep(500);
-        find(addPosCloseFrame).click();
+    /**
+     * Open and closes the Add position frame
+     */
+    public void closeAddPosition () {
+        try {
+            displayAddPosition();
+            Thread.sleep(500);
+            find(addPosCloseFrame).click();
+        } catch (Exception e) {
+            Report.log(Status.INFO, "Could not close the add position frame successfully.", false);
+        }
     }
 
+    /**
+     * Adds a position sending only required fields
+     */
     public void addPosMandatoryOnly (String name, String requestor, String startDate, String bookingID, String rate,
                                     String LOS, String practice, String jobCode, String reqComp) {
         displayAddPosition();
@@ -95,6 +114,11 @@ public class Positions extends Browser {
         waitForElement(By.xpath("//span[@class='individual-position__title' and text()='" + name + "']"),5L);
     }
 
+    /**
+     * Handles the date fields
+     * element: locator of the date/calendar element
+     * date: date in string format mm/dd/yyyy
+     */
     public void enterDates (By element, String date) {
         find(element).click();
         clearDateBackSpace(element);
@@ -102,6 +126,10 @@ public class Positions extends Browser {
         find(element).sendKeys(Keys.RETURN);
     }
 
+    /**
+     * Clears the current date in the date fields
+     * element: locator of the date/calendar element
+     */
     public void clearDateBackSpace (By element) {
         if(find(element).getAttribute("value").length() > 0) {
             IntStream.range(0, 10).forEach(i -> find(element).sendKeys(Keys.BACK_SPACE));
@@ -109,35 +137,61 @@ public class Positions extends Browser {
         }
     }
 
+    /**
+     * Handles the timer error alert displayed when the dates are cleared
+     */
     public void handleTimer () {
         By timer = By.xpath("//button[@class='Toastify__close-button Toastify__close-button--error']");
-        try {
-            //waitForElement(timer);
+        try{
             if(find(timer).isDisplayed()){
                 find(timer).click();
             }
-        } catch (NoSuchElementException ignored) {
+        } catch (Exception ignored) {
         }
     }
 
+    /**
+     * Selects values from autocomplete fields
+     * value: value to select from the list, must be an exact match
+     */
     public void enterAutocompleteList (By element, String value) {
         find(element).sendKeys(value);
         waitForDynamicList(value);
         find(element).sendKeys(Keys.RETURN);
     }
 
+    /**
+     * Selects values from autocomplete fields with multiple selections
+     * value: value to select from the list, must be an exact match
+     */
     public void enterAutocompleteListMulti (By element, String value) {
         find(element).sendKeys(value);
         waitForDynamicListMulti();
         find(element).sendKeys(Keys.RETURN);
     }
 
+    /**
+     * Checks if position exist
+     */
     public boolean positionExists (String name) {
-        waitForElement(positionList, 3L);
-        positionName = By.xpath("//span[@class='individual-position__title' and text()='" + name + "']");
-        return find(positionName).getText().equalsIgnoreCase(name);
+        try {
+            waitForElement(positionList, 3L);
+            positionName = By.xpath("//span[@class='individual-position__title' and text()='" + name + "']");
+            return find(positionName).getText().equalsIgnoreCase(name);
+        } catch (Exception e) {
+            Report.log(Status.INFO, "Position " + name + " does not exist.", false);
+            return false;
+        }
     }
 
+    /**
+     * Add a new candidate
+     * position: name of the position where the candidate will be added to
+     * name: candidate's name. If internal, must be an exact match to use autocomplete. Otherwise,
+     * values must be entered manually
+     * isInternal: true, candidate is an AT employee; false, external candidate
+     * email: candidate's email address
+     */
     public void addCandidate (String position, String name, boolean isInternal,  String email) {
         if(positionExists(position)) {
             find(positionName).click();
@@ -150,11 +204,17 @@ public class Positions extends Browser {
                 find(candidateName).sendKeys(name);
             }
             find(candidateAddBttn).click();
-        } else {
-            System.out.println("Position " + position + " not found!");
+            waitForElement(By.xpath("//span[@class='individual-candidate__data individual-candidate__data--name'" +
+                    " and text()='" + name + "']"),5L);
         }
     }
 
+    /**
+     * Handles internal candidates. If an exact match for name exist, autocomplete data is used. Otherwise,
+     * name and email are entered manually
+     * name: candidate's name
+     * email: candidate's email address
+     */
     public void handleInternalCandidate (String name, String email) {
         By autocompleteName = By.xpath("//span[@class='name' and text()='" + name + "']");
         waitForElement(candidateInternalRadioBttn, 3L);
@@ -164,12 +224,13 @@ public class Positions extends Browser {
             waitForElement(autocompleteName, 3L);
             find(autocompleteName).click();
         } catch (Exception e) {
-            System.out.println("Name " + name + " not found in autocomplete list! " + e);
+            Report.log(Status.INFO, "Internal candidate " + name + " was not found.", false);
             find(candidateEmail).sendKeys(email);
         }
     }
 
-        /* To test locators of all elements on the Add Position frame
+    /*
+     To test locators of all elements on the Add Position frame
     public void elementsTest() {
         addPosition();
         //find(addPosCloseFrame).click(); // org.openqa.selenium.ElementNotInteractableException: element not interactable

@@ -15,6 +15,8 @@ public class Tests extends Browser {
     Clients client = new Clients();
     Positions position = new Positions();
     private String clientName = ".:karlo";
+    private String browser;
+    private String URL;
 
     @BeforeClass
     public static void beforeClass() {
@@ -27,20 +29,22 @@ public class Tests extends Browser {
     }
 
     public void login() {
+        browser = "Chrome";
+        URL = "https://positionsapp-uat.azurewebsites.net/#";
         try {
             Report.test = Report.extentRpt.createTest("Login test.");
-            launchBrowser("Chrome", "https://positionsapp-uat.azurewebsites.net/#");
+            launchBrowser(browser, URL);
             emailLogin();
             pwdLogin();
             activeSessionPrompt(true,false);
             Report.log(Status.PASS, "Login successful.", false);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
+            Report.log(Status.FAIL, "Login failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
 
-    //Pass
+    //
     @Test
     public void addClient() {
         try {
@@ -48,35 +52,37 @@ public class Tests extends Browser {
             client.addClient(clientName);
             Report.log(Status.PASS, "Client added successfully.", true);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
+            Report.log(Status.FAIL, "Add client failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
 
+    //
     @Test
     public void cancelAddNewClient() {
         try {
             Report.test = Report.extentRpt.createTest("Cancel add client test.");
             client.cancelAddClient(clientName);
-            Report.log(Status.PASS, "Client not added successfully.", true);
+            Report.log(Status.PASS, "Client add canceled successfully.", true);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
+            Report.log(Status.FAIL, "Cancel add client failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
 
-    //Pass
+    //
     @Test
     public void deleteClient() {
         try {
             Report.test = Report.extentRpt.createTest("Delete client test.");
             client.deleteClient(clientName, true);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
+            Report.log(Status.FAIL, "Delete client failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
 
+    //
     @Test
     public void closeAddPosition() {
         try {
@@ -85,11 +91,12 @@ public class Tests extends Browser {
             position.closeAddPosition();
             Report.log(Status.PASS, "Closed the add position frame successfully.", false);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
+            Report.log(Status.FAIL, "Close add position frame failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
 
+    //
     @Test
     public void addPosition() {
         try {
@@ -99,11 +106,12 @@ public class Tests extends Browser {
                     "Digital", "FSI", "FSQE2M - Title - Automation Tester", "Test Automation");
             Report.log(Status.PASS, "New position added successfully.", true);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
+            Report.log(Status.FAIL, "Add new position failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
 
+    //
     @Test
     public void addInternalAutocompleteCandidate() {
         try {
@@ -112,11 +120,12 @@ public class Tests extends Browser {
             position.addCandidate("QA", "Karlo Urbano Gutierrez Olmedo", true, "");
             Report.log(Status.PASS, "New internal candidate added successfully.", true);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
+            Report.log(Status.FAIL, "Add internal candidate using autocomplete failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
 
+    //
     @Test
     public void addInternalManualCandidate() {
         try {
@@ -125,7 +134,7 @@ public class Tests extends Browser {
             position.addCandidate("QA", "Karlo Gutierrez", true, "karlo.gutierrez@at.com");
             Report.log(Status.PASS, "New internal candidate added successfully.", true);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
+            Report.log(Status.FAIL, "Add internal candidate manually failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
@@ -138,7 +147,7 @@ public class Tests extends Browser {
             position.addCandidate("QA", "QA Intern - External", false, "internN@at.com");
             Report.log(Status.PASS, "New external candidate added successfully.", true);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
+            Report.log(Status.FAIL, "Add external candidate failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
@@ -150,7 +159,7 @@ public class Tests extends Browser {
             Report.log(Status.INFO, "Browser closed successfully.", false);
             Report.closeReport();
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Browser did not close successfully. \n"
+            Report.log(Status.FAIL, "Browser did not close successfully with exception: \n"
                     + e.getMessage(), false);
         }
     }

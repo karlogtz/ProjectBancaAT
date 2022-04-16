@@ -58,8 +58,8 @@ public class Browser {
             driver.manage().window().maximize();
             driver.get(URL);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
-                    + e.getMessage(), false);
+            Report.log(Status.FAIL, "Browser wasn't able to launch with with exception: \n"
+                    + e.getMessage(), true);
         }
     }
 
@@ -76,9 +76,10 @@ public class Browser {
             waitForElement(emailTextBox, 5L);
             find(emailTextBox).sendKeys(user);
             find(emailNextBttn).click();
+            Report.log(Status.INFO, "Email entered successfully", false);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
-                    + e.getMessage(), false);
+            Report.log(Status.FAIL, "Enter login email failed with exception: \n"
+                    + e.getMessage(), true);
         }
     }
 
@@ -90,9 +91,10 @@ public class Browser {
             waitForElement(atLogo, 5L);
             find(pwdTextBox).sendKeys(pwd);
             find(pwdLoginBttn).click();
+            Report.log(Status.INFO, "Password entered successfully", false);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
-                    + e.getMessage(), false);
+            Report.log(Status.FAIL, "Enter login password failed with exception: \n"
+                    + e.getMessage(), true);
         }
     }
 
@@ -104,24 +106,29 @@ public class Browser {
     public void activeSessionPrompt(boolean promptAgain, boolean keepSessionActive) {
         try {
             waitForElement(activeSessionBttnYes, 5L);
-            if (promptAgain) {
-                find(doNotShowAgainBox).click();
-            }
-            if (keepSessionActive) {
-                find(activeSessionBttnYes).click();
+            if(find(activeSessionBttnYes).isDisplayed()) {
+                if (promptAgain) {
+                    find(doNotShowAgainBox).click();
+                }
+                if (keepSessionActive) {
+                    find(activeSessionBttnYes).click();
+                } else {
+                    find(activeSessionBttnNo).click();
+                }
+                waitForElement(backlogPageHeader, 15L);
             } else {
-                find(activeSessionBttnNo).click();
+                Report.log(Status.INFO, "Keep active session prompt was not displayed.", false);
             }
-            waitForElement(backlogPageHeader, 15L);
         } catch (Exception e) {
-            Report.log(Status.FAIL, "Test failed with exception: \n"
+            Report.log(Status.INFO, "Keep active session failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
 
     /**
-     * Waiting defined by timeOut (in seconds) for an element to be present on the page, checking
-     * for its presence once every 1 second.
+     * Wait for elements to be present polling every 1 second
+     * element: element locator
+     * timeOut: timeframe to wait for the element to bre present (in seconds)
      */
     public void waitForElement(final By element, Long timeOut) {
         try {
@@ -131,12 +138,13 @@ public class Browser {
                     .ignoring(NoSuchElementException.class);
             WebElement find = wait.until(driver -> find(element));
         } catch (Exception e) {
-            Report.log(Status.FAIL, "WebElement " + element + " was not found.", false);
+            Report.log(Status.INFO, "WebElement " + element + " was not found.", false);
         }
     }
 
     /**
-     * Wait for the results of the search in the dynamic lists to be displayed
+     * Wait for the results of the search in the dynamic lists to be displayed by value
+     * value: text of the element to look for (must be an exact match)
      */
     public void waitForDynamicList (String value) {
         By element = By.xpath("//div[contains(@id,'react-select') and text()='" + value + "']");
