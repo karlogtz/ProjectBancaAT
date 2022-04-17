@@ -14,9 +14,15 @@ public class Tests extends Browser {
 
     Clients client = new Clients();
     Positions position = new Positions();
-    private String clientName = ".:karlo";
+
+    /**
+     * Temporary variables for testing. These will be replace with
+     */
+    private final String clientName = ".:karlo";
     private String browser;
     private String URL;
+    private String user = "iss@agilethought.com";
+    private String pwd = "NewPassword!";
 
     @BeforeClass
     public static void beforeClass() {
@@ -25,26 +31,62 @@ public class Tests extends Browser {
 
     @Before
     public void setUp() {
-        login();
+        login(user, pwd);
     }
 
-    public void login() {
+    public void login(String user, String password) {
         browser = "Chrome";
         URL = "https://positionsapp-uat.azurewebsites.net/#";
         try {
-            Report.test = Report.extentRpt.createTest("Login test.");
+            Report.test = Report.extentRpt.createTest("Login.");
             launchBrowser(browser, URL);
-            emailLogin();
-            pwdLogin();
+            emailLogin(user);
+            pwdLogin(password);
             activeSessionPrompt(true,false);
-            Report.log(Status.PASS, "Login successful.", false);
         } catch (Exception e) {
             Report.log(Status.FAIL, "Login failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
 
-    //
+    @Test
+    public void unsupportedBrowserTest() {
+        try {
+            Report.test = Report.extentRpt.createTest("Unsupported browser test.");
+            browser = "Opera";
+            launchBrowser(browser, URL);
+        } catch (Exception e) {
+            Report.log(Status.PASS, "Unsupported browser failed with exception: \n"
+                    + e.getMessage(), true);
+        }
+    }
+
+    @Test
+    public void badUserLoginTest() {
+        try {
+            Report.test = Report.extentRpt.createTest("Bad user login test.");
+            user = "mail@mail.com";
+            login(user, pwd);
+            Report.log(Status.PASS, "Login with invalid user failed - Expected.", true);
+        } catch (Exception e) {
+            Report.log(Status.PASS, "Login with invalid user failed with exception: \n"
+                    + e.getMessage(), true);
+        }
+    }
+
+    @Test
+    public void badPwdLoginTest() {
+        try {
+            Report.test = Report.extentRpt.createTest("Bad password login test.");
+            pwd = "passWord!";
+            login(user, pwd);
+            Report.log(Status.PASS, "Login with invalid password failed - Expected.", true);
+        } catch (Exception e) {
+            Report.log(Status.PASS, "Login with invalid password failed with exception: \n"
+                    + e.getMessage(), true);
+        }
+    }
+
     @Test
     public void addClient() {
         try {

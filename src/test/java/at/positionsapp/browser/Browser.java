@@ -16,11 +16,6 @@ import java.util.Locale;
 public class Browser {
 
     public static WebDriver driver;
-    JavascriptExecutor js = (JavascriptExecutor) driver;
-
-    // Temp variables for login
-    final String user = "iss@agilethought.com";
-    final String pwd = "NewPassword!";
 
     // Locators
     By emailTextBox = By.xpath("//input[@type='email']");
@@ -28,6 +23,7 @@ public class Browser {
     By atLogo = By.id("companyLogo");
     By pwdTextBox = By.xpath("//input[@type='password']");
     By pwdLoginBttn = By.xpath("//span[@class='submit']");
+    By loginEmail = By.xpath("//div[@id='displayName']");
     By doNotShowAgainBox = By.xpath("//input[@name='DontShowAgain']");
     By activeSessionBttnNo = By.xpath("//input[@type='button']");
     By activeSessionBttnYes = By.xpath("//input[@type='submit']");
@@ -71,7 +67,7 @@ public class Browser {
     /**
      * Manage login email prompt
      */
-    public void emailLogin() {
+    public void emailLogin(String user) {
         try {
             waitForElement(emailTextBox, 5L);
             find(emailTextBox).sendKeys(user);
@@ -86,7 +82,7 @@ public class Browser {
     /**
      * Manage login password prompt
      */
-    public void pwdLogin() {
+    public void pwdLogin(String pwd) {
         try {
             waitForElement(atLogo, 5L);
             find(pwdTextBox).sendKeys(pwd);
@@ -105,7 +101,7 @@ public class Browser {
      */
     public void activeSessionPrompt(boolean promptAgain, boolean keepSessionActive) {
         try {
-            waitForElement(activeSessionBttnYes, 5L);
+            waitForElement(loginEmail, 5L);
             if(find(activeSessionBttnYes).isDisplayed()) {
                 if (promptAgain) {
                     find(doNotShowAgainBox).click();
@@ -115,12 +111,17 @@ public class Browser {
                 } else {
                     find(activeSessionBttnNo).click();
                 }
-                waitForElement(backlogPageHeader, 15L);
             } else {
                 Report.log(Status.INFO, "Keep active session prompt was not displayed.", false);
             }
+            waitForElement(backlogPageHeader, 15L);
+            if(find(backlogPageHeader).isDisplayed()) {
+                Report.log(Status.INFO, "Login successful.", false);
+            } else {
+                Report.log(Status.FAIL, "Login failed.", false);
+            }
         } catch (Exception e) {
-            Report.log(Status.INFO, "Keep active session failed with exception: \n"
+            Report.log(Status.FAIL, "Keep active session failed with exception: \n"
                     + e.getMessage(), false);
         }
     }
