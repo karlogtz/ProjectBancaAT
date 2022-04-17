@@ -205,7 +205,7 @@ public class Positions extends Browser {
             }
             find(candidateAddBttn).click();
             waitForElement(By.xpath("//span[@class='individual-candidate__data individual-candidate__data--name'" +
-                    " and text()='" + name + "']"),5L);
+                    " and text()='" + name + "']"),3L);
         }
     }
 

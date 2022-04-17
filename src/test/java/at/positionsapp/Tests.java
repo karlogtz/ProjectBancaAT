@@ -99,7 +99,6 @@ public class Tests extends Browser {
         }
     }
 
-    //
     @Test
     public void cancelAddNewClient() {
         try {
@@ -112,7 +111,6 @@ public class Tests extends Browser {
         }
     }
 
-    //
     @Test
     public void deleteClient() {
         try {
@@ -124,7 +122,6 @@ public class Tests extends Browser {
         }
     }
 
-    //
     @Test
     public void closeAddPosition() {
         try {
@@ -138,7 +135,6 @@ public class Tests extends Browser {
         }
     }
 
-    //
     @Test
     public void addPosition() {
         try {
@@ -153,7 +149,6 @@ public class Tests extends Browser {
         }
     }
 
-    //
     @Test
     public void addInternalAutocompleteCandidate() {
         try {
@@ -167,7 +162,6 @@ public class Tests extends Browser {
         }
     }
 
-    //
     @Test
     public void addInternalManualCandidate() {
         try {
