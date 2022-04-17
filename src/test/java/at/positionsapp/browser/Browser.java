@@ -102,23 +102,19 @@ public class Browser {
     public void activeSessionPrompt(boolean promptAgain, boolean keepSessionActive) {
         try {
             waitForElement(loginEmail, 5L);
-            if(find(activeSessionBttnYes).isDisplayed()) {
-                if (promptAgain) {
-                    find(doNotShowAgainBox).click();
-                }
-                if (keepSessionActive) {
-                    find(activeSessionBttnYes).click();
-                } else {
-                    find(activeSessionBttnNo).click();
-                }
-            } else {
-                Report.log(Status.INFO, "Keep active session prompt was not displayed.", false);
+            if (promptAgain) {
+                find(doNotShowAgainBox).click();
             }
-            waitForElement(backlogPageHeader, 15L);
-            if(find(backlogPageHeader).isDisplayed()) {
-                Report.log(Status.INFO, "Login successful.", false);
+            if (keepSessionActive) {
+                find(activeSessionBttnYes).click();
             } else {
-                Report.log(Status.FAIL, "Login failed.", false);
+                find(activeSessionBttnNo).click();
+            }
+            waitForElement(backlogPageHeader,15L);
+            if(find(backlogPageHeader).isDisplayed()) {
+                Report.log(Status.PASS, "Login successful.", true);
+            } else {
+                Report.log(Status.FAIL, "Login failed.", true);
             }
         } catch (Exception e) {
             Report.log(Status.FAIL, "Keep active session failed with exception: \n"
