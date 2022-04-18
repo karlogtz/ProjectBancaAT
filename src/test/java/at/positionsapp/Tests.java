@@ -188,6 +188,56 @@ public class Tests extends Browser {
         }
     }
 
+    /**
+     * There's an error while cloning the position. Need to check why that happens...
+     */
+    @Test
+    public void clonePositionSameClientSamePosition() {
+        try{
+            Report.test = Report.extentRpt.createTest("Clone position to the same client and same position name test.");
+            client.selectClient(clientName);
+            position.clonePosition("QA", "", "");
+            Report.log(Status.PASS, "Position cloned successfully.", true);
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "Position clone could not be completed successfully " +
+                    "with exception: " + e.getMessage(), false);
+        }
+    }
+
+    /**
+     * There's an error while cloning the position. Need to check why that happens...
+     */
+    @Test
+    public void clonePositionDifferentClientSamePosition() {
+        try{
+            Report.test = Report.extentRpt.createTest("Clone position to a different client.");
+            client.selectClient(clientName);
+            position.clonePosition("QA", ".karlo", "");
+            client.selectClient(".karlo");
+            Report.log(Status.PASS, "Position cloned successfully.", true);
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "Position clone could not be completed successfully " +
+                    "with exception: " + e.getMessage(), false);
+        }
+    }
+
+    /**
+     * There's an error while cloning the position. Need to check why that happens...
+     */
+    @Test
+    public void clonePositionDifferentClientDifferentPosition() {
+        try{
+            Report.test = Report.extentRpt.createTest("Clone position to a different client.");
+            client.selectClient(clientName);
+            position.clonePosition("QA", ".karlo", "Testing");
+            client.selectClient(".karlo");
+            Report.log(Status.PASS, "Position cloned successfully.", true);
+        } catch (Exception e) {
+            Report.log(Status.FAIL, "Position clone could not be completed successfully " +
+                    "with exception: " + e.getMessage(), false);
+        }
+    }
+
     @After
     public void tearDown() {
         try {

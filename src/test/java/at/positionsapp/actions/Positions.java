@@ -6,7 +6,10 @@ import com.aventstack.extentreports.Status;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
+import java.util.List;
 import java.util.stream.IntStream;
 
 public class Positions extends Browser {
@@ -59,7 +62,7 @@ public class Positions extends Browser {
     By addPosSaveBttn = By.xpath("//button[@type='submit']");
     By addPosCancelBttn = By.xpath("//span[@class='add-client__cancel']");
 
-    //Add candidate locators locators
+    // Add candidate locators locators
     By positionList = By.xpath("//ul[@class='positions__list']");
     By positionName;
     By candidateAddNew = By.xpath("//span[text()='Add candidate']");
@@ -68,6 +71,18 @@ public class Positions extends Browser {
     By candidateEmail = By.xpath("//input[@placeholder='Candidate email']");
     By candidateAddBttn = By.xpath("//button[text()='Add']");
     By candidateCancelBttn = By.xpath("//span[@class='add-client__cancel']");
+
+    // Position action locators
+    By positionsList = By.xpath("//span[@class='individual-position__title']");
+    By posCloneIcon = By.xpath("//span[@class='individual-position__info'][2]");
+    By posCloneFrame = By.xpath("//div[text()='Clone position']");
+    By posCloneCurrentClientCheck = By.xpath("//input[@type='checkbox']");
+    By posCloneClientName = By.xpath("//input[@class='edit-candidate__input edit-candidate__input--name" +
+            " position-form__input'][1]");
+    By posClonePositionName = By.xpath("//input[@class='edit-candidate__input edit-candidate__input--name" +
+            " position-form__input'][2]");
+    By posCloneAddBttn = By.xpath("//button[@type='submit']");
+    By posCloneCancelBttn = By.xpath("//span[@class='add-client__cancel']");
 
     /**
      * Opens the Add position frame
@@ -227,6 +242,40 @@ public class Positions extends Browser {
             Report.log(Status.INFO, "Internal candidate " + name + " was not found.", false);
             find(candidateEmail).sendKeys(email);
         }
+    }
+
+    public void selectPosAction(String position, By actionIcon) {
+        if (positionExists(position)) {
+            scrollToElement(find(positionName));
+            List<WebElement> positions = driver.findElements(positionsList);
+            if (positions.size() > 0) {
+                for (WebElement client : positions) {
+                    if (client.getText().equalsIgnoreCase(position)) {
+                        find(actionIcon).click();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public void clonePosition(String position, String client, String clonePosition) {
+        selectPosAction(position, posCloneIcon);
+        waitForElement(posCloneFrame,5L);
+        if (!find(posCloneClientName).getText().equalsIgnoreCase(client)) {
+            find(posCloneCurrentClientCheck).click();
+            Select clients = new Select(find(By.xpath("//select")));
+            System.out.println(client);
+            clients.selectByVisibleText(client);
+            posClonePositionName = By.xpath("//input[@class='edit-candidate__input edit-candidate__input--name" +
+                    " position-form__input']");
+        }
+        if (!find(posClonePositionName).getCssValue("value").equalsIgnoreCase(clonePosition)
+                && clonePosition.length() > 0) {
+            find(posClonePositionName).clear();
+            find(posClonePositionName).sendKeys(clonePosition);
+        }
+        find(posCloneAddBttn).click();
     }
 
     /*
